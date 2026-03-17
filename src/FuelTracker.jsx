@@ -1,5 +1,42 @@
 import { useState } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from "recharts";
+
+const BRENT_DATA = [
+  { date: "Feb 24", price: 84.2 },
+  { date: "Feb 25", price: 85.1 },
+  { date: "Feb 26", price: 86.4 },
+  { date: "Feb 27", price: 89.3 },
+  { date: "Feb 28", price: 104.7 },
+  { date: "Mar 1",  price: 112.3 },
+  { date: "Mar 2",  price: 118.9 },
+  { date: "Mar 3",  price: 121.4 },
+  { date: "Mar 4",  price: 119.8 },
+  { date: "Mar 5",  price: 124.2 },
+  { date: "Mar 6",  price: 127.6 },
+  { date: "Mar 7",  price: 125.1 },
+  { date: "Mar 8",  price: 128.4 },
+  { date: "Mar 9",  price: 130.2 },
+  { date: "Mar 10", price: 129.7 },
+  { date: "Mar 11", price: 126.3 },
+  { date: "Mar 12", price: 124.8 },
+  { date: "Mar 13", price: 122.1 },
+  { date: "Mar 14", price: 123.5 },
+  { date: "Mar 15", price: 121.9 },
+  { date: "Mar 16", price: 120.4 },
+  { date: "Mar 17", price: 119.2 },
+];
+
+const BrentTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{ background: "#0f1724", border: "1px solid #1e293b", borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>
+        <div style={{ color: "#64748b", marginBottom: 4, fontFamily: "'DM Mono', monospace" }}>{label}</div>
+        <div style={{ color: "#f97316", fontWeight: 700 }}>${payload[0].value.toFixed(2)} <span style={{ fontWeight: 400, color: "#64748b" }}>/ barrel</span></div>
+      </div>
+    );
+  }
+  return null;
+};
 
 const FUEL_DATA = [
   { date: "Feb 20", petrol: null, diesel: null, jet: null, note: "Pre-conflict baseline" },
@@ -189,6 +226,44 @@ export default function FuelTracker() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap');
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
       `}</style>
+
+      {/* Global Brent Crude Chart */}
+      <div style={{ padding: "16px 32px 0", maxWidth: 860, margin: "0 auto" }}>
+        <div style={{ background: "#0a1120", border: "1px solid #1e293b", borderRadius: 14, padding: "20px 28px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>Brent Crude — Global Spot Price</h2>
+              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · last 3 weeks</p>
+            </div>
+            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: "#f97316" }}>
+                  ${BRENT_DATA[BRENT_DATA.length - 1].price.toFixed(2)}
+                </div>
+                <div style={{ fontSize: 11, color: "#ef4444", marginTop: 1 }}>
+                  +${(BRENT_DATA[BRENT_DATA.length - 1].price - BRENT_DATA[0].price).toFixed(2)} since Feb 24
+                </div>
+              </div>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={130}>
+            <AreaChart data={BRENT_DATA} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="brentGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f97316" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+              <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} interval={3} />
+              <YAxis domain={[75, 135]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip content={<BrentTooltip />} />
+              <ReferenceLine x="Feb 28" stroke="#ef444466" strokeDasharray="4 4" label={{ value: "Crisis", fill: "#ef4444", fontSize: 10 }} />
+              <Area type="monotone" dataKey="price" stroke="#f97316" strokeWidth={2} fill="url(#brentGrad)" dot={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
       <div style={{ padding: "24px 32px", maxWidth: 860, margin: "0 auto" }}>
 
