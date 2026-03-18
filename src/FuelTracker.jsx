@@ -2,28 +2,28 @@ import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from "recharts";
 
 const WTI_DATA = [
-  { date: "Feb 24", price: 80.8 },
-  { date: "Feb 25", price: 81.7 },
-  { date: "Feb 26", price: 83.0 },
-  { date: "Feb 27", price: 85.9 },
-  { date: "Feb 28", price: 101.3 },
-  { date: "Mar 1",  price: 108.8 },
-  { date: "Mar 2",  price: 115.2 },
-  { date: "Mar 3",  price: 117.6 },
-  { date: "Mar 4",  price: 116.0 },
-  { date: "Mar 5",  price: 120.5 },
-  { date: "Mar 6",  price: 123.8 },
-  { date: "Mar 7",  price: 121.2 },
-  { date: "Mar 8",  price: 124.3 },
-  { date: "Mar 9",  price: 126.0 },
-  { date: "Mar 10", price: 125.3 },
-  { date: "Mar 11", price: 122.1 },
-  { date: "Mar 12", price: 120.7 },
-  { date: "Mar 13", price: 118.0 },
-  { date: "Mar 14", price: 119.4 },
-  { date: "Mar 15", price: 117.8 },
-  { date: "Mar 16", price: 116.3 },
-  { date: "Mar 17", price: 115.1 },
+  { date: "Feb 24", price: 65.2 },
+  { date: "Feb 25", price: 66.8 },
+  { date: "Feb 26", price: 69.1 },
+  { date: "Feb 27", price: 74.3 },
+  { date: "Feb 28", price: 84.7 },
+  { date: "Mar 1",  price: 89.2 },
+  { date: "Mar 2",  price: 92.6 },
+  { date: "Mar 3",  price: 94.3 },
+  { date: "Mar 4",  price: 92.8 },
+  { date: "Mar 5",  price: 95.4 },
+  { date: "Mar 6",  price: 97.9 },
+  { date: "Mar 7",  price: 96.1 },
+  { date: "Mar 8",  price: 98.7 },
+  { date: "Mar 9",  price: 90.2 },
+  { date: "Mar 10", price: 89.6 },
+  { date: "Mar 11", price: 87.4 },
+  { date: "Mar 12", price: 95.9 },
+  { date: "Mar 13", price: 98.9 },
+  { date: "Mar 14", price: 103.7 },
+  { date: "Mar 15", price: 105.8 },
+  { date: "Mar 16", price: 93.7 },
+  { date: "Mar 17", price: 93.7 },
 ];
 
 const WTITooltip = ({ active, payload, label }) => {
@@ -256,7 +256,7 @@ export default function FuelTracker() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} interval={3} />
-              <YAxis domain={[75, 130]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[60, 110]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip content={<WTITooltip />} />
               <ReferenceLine x="Feb 28" stroke="#ef444466" strokeDasharray="4 4" label={{ value: "Crisis", fill: "#ef4444", fontSize: 10 }} />
               <Area type="monotone" dataKey="price" stroke="#f97316" strokeWidth={2} fill="url(#wtiGrad)" dot={false} />
