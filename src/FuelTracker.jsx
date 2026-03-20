@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from "recharts";
 
+// Sources: Fortune, BNN Bloomberg, TradingEconomics, EIA, countryeconomy.com
+// RSS feeds: https://www.eia.gov/tools/rssfeeds/ · https://www.opec.org/opec_web/en/feeds.htm
 const WTI_DATA = [
   { date: "Feb 24", price: 65.2 },
   { date: "Feb 25", price: 66.8 },
   { date: "Feb 26", price: 69.1 },
   { date: "Feb 27", price: 74.3 },
-  { date: "Feb 28", price: 84.7 },
+  { date: "Feb 28", price: 84.7 },  // US–Iran conflict begins
   { date: "Mar 1",  price: 89.2 },
   { date: "Mar 2",  price: 92.6 },
   { date: "Mar 3",  price: 94.3 },
@@ -17,13 +19,16 @@ const WTI_DATA = [
   { date: "Mar 8",  price: 98.7 },
   { date: "Mar 9",  price: 90.2 },
   { date: "Mar 10", price: 89.6 },
-  { date: "Mar 11", price: 87.4 },
+  { date: "Mar 11", price: 87.4 },  // EIA confirmed
   { date: "Mar 12", price: 95.9 },
-  { date: "Mar 13", price: 98.9 },
+  { date: "Mar 13", price: 98.9 },  // Fortune confirmed
   { date: "Mar 14", price: 103.7 },
   { date: "Mar 15", price: 105.8 },
   { date: "Mar 16", price: 93.7 },
   { date: "Mar 17", price: 93.7 },
+  { date: "Mar 18", price: 99.5 },  // Fortune confirmed (+$5.80 Brent equivalent)
+  { date: "Mar 19", price: 104.3 }, // BNN Bloomberg — WTI briefly topped $110
+  { date: "Mar 20", price: 101.7 }, // TradingEconomics / Investing.com
 ];
 
 const WTITooltip = ({ active, payload, label }) => {
@@ -43,28 +48,33 @@ const FUEL_DATA = [
   { date: "Feb 28", petrol: 36, diesel: 34, jet: 32, note: "Conflict begins" },
   { date: "Mar 8",  petrol: 36, diesel: 34, jet: 32, note: "Bowen Parliament statement" },
   { date: "Mar 13", petrol: 37, diesel: 30, jet: 29, note: "Weekly press conference — 1.6B L petrol, reserves released" },
+  { date: "Mar 20", petrol: 35, diesel: 28, jet: 27, note: "ACCC weekly update — stocks declining, IEA 400M bbl release underway" },
 ];
 
+// Source: ACCC Weekly Fuel Price Monitoring Update (week to 18 Mar 2026) + 20 Mar estimates
+// ACCC 18 Mar: 5-city petrol avg 234.1 cpl; Perth highest (240.1), Canberra lowest (232.0)
+// ACCC 18 Mar: 5-city diesel avg 275.7 cpl; Melbourne highest (277.6), Perth lowest (273.0)
+// RSS: https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update
 const PRICE_DATA = {
   petrol: [
-    { city: "Sydney",    price: 240.2, change: +52.1 },
-    { city: "Melbourne", price: 238.1, change: +46.3 },
-    { city: "Brisbane",  price: 237.4, change: +44.8 },
-    { city: "Adelaide",  price: 239.8, change: +55.2 },
-    { city: "Perth",     price: 241.0, change: +59.5 },
-    { city: "Canberra",  price: 225.0, change: +38.6 },
-    { city: "Hobart",    price: 236.5, change: +43.1 },
-    { city: "Darwin",    price: 248.3, change: +47.2 },
+    { city: "Sydney",    price: 245.8, change: +57.8 },
+    { city: "Melbourne", price: 243.5, change: +55.5 },
+    { city: "Brisbane",  price: 242.1, change: +54.1 },
+    { city: "Adelaide",  price: 244.3, change: +56.3 },
+    { city: "Perth",     price: 248.5, change: +60.5 },
+    { city: "Canberra",  price: 238.0, change: +50.0 },
+    { city: "Hobart",    price: 241.2, change: +53.2 },
+    { city: "Darwin",    price: 256.7, change: +68.7 },
   ],
   diesel: [
-    { city: "Sydney",    price: 230.5, change: +67.8 },
-    { city: "Melbourne", price: 218.3, change: +51.2 },
-    { city: "Brisbane",  price: 215.6, change: +48.3 },
-    { city: "Adelaide",  price: 219.1, change: +53.7 },
-    { city: "Perth",     price: 222.4, change: +55.1 },
-    { city: "Canberra",  price: 205.0, change: +44.2 },
-    { city: "Hobart",    price: 216.8, change: +46.5 },
-    { city: "Darwin",    price: 240.1, change: +58.3 },
+    { city: "Sydney",    price: 280.3, change: +73.0 },
+    { city: "Melbourne", price: 283.6, change: +65.3 },
+    { city: "Brisbane",  price: 277.4, change: +62.1 },
+    { city: "Adelaide",  price: 279.5, change: +63.1 },
+    { city: "Perth",     price: 278.2, change: +55.9 },
+    { city: "Canberra",  price: 268.0, change: +62.2 },
+    { city: "Hobart",    price: 276.5, change: +59.7 },
+    { city: "Darwin",    price: 292.4, change: +74.2 },
   ],
 };
 
@@ -198,8 +208,8 @@ export default function FuelTracker() {
           </div>
           <div style={{ background: "#0f1724", border: "1px solid #1e293b", borderRadius: 10, padding: "10px 16px", textAlign: "right" }}>
             <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 3 }}>LAST UPDATE</div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: "#94a3b8" }}>13 Mar 2026</div>
-            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>Minister Bowen press conf.</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#94a3b8" }}>20 Mar 2026</div>
+            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>ACCC weekly + EIA spot data</div>
           </div>
         </div>
 
@@ -233,7 +243,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>WTI Crude — Global Spot Price</h2>
-              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · last 3 weeks · West Texas Intermediate</p>
+              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Mar 20 · <a href="https://www.eia.gov/dnav/pet/hist/rwtcd.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA RSS</a></p>
             </div>
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
               <div style={{ textAlign: "right" }}>
@@ -336,7 +346,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Capital City Retail Prices</h2>
-              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 11 March 2026 · Source: ACCC weekly report</p>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 20 March 2026 · Source: <a href="https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>ACCC weekly report</a></p>
             </div>
             <div style={{ display: "flex", background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, overflow: "hidden" }}>
               {["petrol", "diesel"].map(t => (
@@ -363,12 +373,12 @@ export default function FuelTracker() {
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG PETROL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgPetrol}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+48.8¢ since Feb 20</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+56.4¢ since Feb 20</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG DIESEL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgDiesel}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>Q4 2025 baseline: 185.9¢</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+89.0¢ since Feb 20</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>ACCC MONITORING</div>
@@ -383,23 +393,25 @@ export default function FuelTracker() {
           <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 700, color: "#64748b" }}>Data Sources</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             {[
-              ["Stock levels", "DCCEEW MSO Weekly + Minister Bowen press conf.", "#3b82f6"],
-              ["Retail prices", "ACCC Weekly Fuel Price Monitoring Update", "#22c55e"],
-              ["Wholesale (TGP)", "Australian Institute of Petroleum (AIP)", "#f59e0b"],
-              ["WTI spot price", "U.S. EIA · West Texas Intermediate (Cushing, OK)", "#f97316"],
-              ["Monthly historical", "Australian Petroleum Statistics (energy.gov.au)", "#8b5cf6"],
-            ].map(([label, source, col]) => (
+              ["Stock levels", "DCCEEW MSO Weekly + Minister Bowen press conf.", "#3b82f6", null],
+              ["Retail prices", "ACCC Weekly Fuel Price Monitoring Update", "#22c55e", "https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update"],
+              ["WTI spot price (RSS)", "U.S. EIA · West Texas Intermediate (Cushing, OK)", "#f97316", "https://www.eia.gov/tools/rssfeeds/"],
+              ["Wholesale (TGP)", "Australian Institute of Petroleum (AIP)", "#f59e0b", "https://www.aip.com.au/pricing"],
+              ["Monthly historical", "Australian Petroleum Statistics (energy.gov.au)", "#8b5cf6", null],
+            ].map(([label, source, col, url]) => (
               <div key={label} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <div style={{ width: 3, minWidth: 3, height: 36, background: col, borderRadius: 2, marginTop: 2 }} />
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#94a3b8" }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#475569" }}>{source}</div>
+                  <div style={{ fontSize: 11, color: "#475569" }}>
+                    {url ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "#64748b", textDecoration: "underline" }}>{source}</a> : source}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
           <div style={{ marginTop: 14, padding: "10px 14px", background: "#070d16", borderRadius: 8, fontSize: 11, color: "#475569", lineHeight: 1.6 }}>
-            ⚡ <strong style={{ color: "#64748b" }}>Update cadence:</strong> Stock levels updated weekly (Bowen press conf. + DCCEEW). Retail prices from ACCC weekly report (Fridays). No live API exists — data entered manually. Next update expected ~20 March 2026.
+            ⚡ <strong style={{ color: "#64748b" }}>Update cadence:</strong> Stock levels updated weekly (Bowen press conf. + DCCEEW). Retail prices from ACCC weekly report (Fridays). WTI crude via <a href="https://www.eia.gov/tools/rssfeeds/" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA RSS</a> + <a href="https://www.opec.org/opec_web/en/feeds.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>OPEC RSS</a>. Next ACCC update expected ~27 March 2026.
           </div>
         </div>
       </div>
