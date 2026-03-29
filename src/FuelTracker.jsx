@@ -24,6 +24,18 @@ const WTI_DATA = [
   { date: "Mar 15", price: 105.8 },
   { date: "Mar 16", price: 93.7 },
   { date: "Mar 17", price: 93.7 },
+  { date: "Mar 18", price: 92.5 },
+  { date: "Mar 19", price: 91.2 },
+  { date: "Mar 20", price: 90.1 },
+  { date: "Mar 21", price: 90.4 },
+  { date: "Mar 22", price: 89.8 },
+  { date: "Mar 23", price: 89.33 },
+  { date: "Mar 24", price: 92.1 },
+  { date: "Mar 25", price: 95.43 },
+  { date: "Mar 26", price: 97.82 },
+  { date: "Mar 27", price: 99.64 },
+  { date: "Mar 28", price: 103.2 },
+  { date: "Mar 29", price: 102.85 },
 ];
 
 const WTITooltip = ({ active, payload, label }) => {
@@ -43,28 +55,29 @@ const FUEL_DATA = [
   { date: "Feb 28", petrol: 36, diesel: 34, jet: 32, note: "Conflict begins" },
   { date: "Mar 8",  petrol: 36, diesel: 34, jet: 32, note: "Bowen Parliament statement" },
   { date: "Mar 13", petrol: 37, diesel: 30, jet: 29, note: "Weekly press conference — 1.6B L petrol, reserves released" },
+  { date: "Mar 25", petrol: 27, diesel: 25, jet: 20, note: "Post-IEA coordinated release — 400M bbl global draw" },
 ];
 
 const PRICE_DATA = {
   petrol: [
-    { city: "Sydney",    price: 240.2, change: +52.1 },
-    { city: "Melbourne", price: 238.1, change: +46.3 },
-    { city: "Brisbane",  price: 237.4, change: +44.8 },
-    { city: "Adelaide",  price: 239.8, change: +55.2 },
-    { city: "Perth",     price: 241.0, change: +59.5 },
-    { city: "Canberra",  price: 225.0, change: +38.6 },
-    { city: "Hobart",    price: 236.5, change: +43.1 },
-    { city: "Darwin",    price: 248.3, change: +47.2 },
+    { city: "Sydney",    price: 252.8, change: +64.7 },
+    { city: "Melbourne", price: 251.5, change: +59.7 },
+    { city: "Brisbane",  price: 250.3, change: +57.7 },
+    { city: "Adelaide",  price: 253.1, change: +68.5 },
+    { city: "Perth",     price: 252.0, change: +70.5 },
+    { city: "Canberra",  price: 254.5, change: +68.1 },
+    { city: "Hobart",    price: 257.2, change: +63.8 },
+    { city: "Darwin",    price: 256.8, change: +55.7 },
   ],
   diesel: [
-    { city: "Sydney",    price: 230.5, change: +67.8 },
-    { city: "Melbourne", price: 218.3, change: +51.2 },
-    { city: "Brisbane",  price: 215.6, change: +48.3 },
-    { city: "Adelaide",  price: 219.1, change: +53.7 },
-    { city: "Perth",     price: 222.4, change: +55.1 },
-    { city: "Canberra",  price: 205.0, change: +44.2 },
-    { city: "Hobart",    price: 216.8, change: +46.5 },
-    { city: "Darwin",    price: 240.1, change: +58.3 },
+    { city: "Sydney",    price: 295.8, change: +133.1 },
+    { city: "Melbourne", price: 302.0, change: +134.9 },
+    { city: "Brisbane",  price: 302.0, change: +134.7 },
+    { city: "Adelaide",  price: 303.5, change: +138.1 },
+    { city: "Perth",     price: 300.3, change: +133.0 },
+    { city: "Canberra",  price: 306.0, change: +145.2 },
+    { city: "Hobart",    price: 304.5, change: +134.2 },
+    { city: "Darwin",    price: 307.5, change: +125.7 },
   ],
 };
 
@@ -233,7 +246,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>WTI Crude — Global Spot Price</h2>
-              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · last 3 weeks · West Texas Intermediate</p>
+              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Mar 29 · West Texas Intermediate</p>
             </div>
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
               <div style={{ textAlign: "right" }}>
@@ -256,7 +269,7 @@ export default function FuelTracker() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} interval={3} />
-              <YAxis domain={[60, 110]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[60, 115]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip content={<WTITooltip />} />
               <ReferenceLine x="Feb 28" stroke="#ef444466" strokeDasharray="4 4" label={{ value: "Crisis", fill: "#ef4444", fontSize: 10 }} />
               <Area type="monotone" dataKey="price" stroke="#f97316" strokeWidth={2} fill="url(#wtiGrad)" dot={false} />
