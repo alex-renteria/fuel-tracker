@@ -29,6 +29,34 @@ const WTI_DATA = [
   { date: "Mar 18", price: 99.5 },  // Fortune confirmed (+$5.80 Brent equivalent)
   { date: "Mar 19", price: 104.3 }, // BNN Bloomberg — WTI briefly topped $110
   { date: "Mar 20", price: 101.7 }, // TradingEconomics / Investing.com
+  { date: "Mar 21", price: 100.8 },
+  { date: "Mar 22", price: 100.2 },
+  { date: "Mar 23", price: 89.33 },
+  { date: "Mar 24", price: 92.1 },
+  { date: "Mar 25", price: 95.43 },
+  { date: "Mar 26", price: 97.82 },
+  { date: "Mar 27", price: 99.64 },
+  { date: "Mar 28", price: 103.2 },
+  { date: "Mar 29", price: 102.85 },
+  { date: "Mar 30", price: 103.1 },
+  { date: "Mar 31", price: 103.4 },
+  { date: "Apr 1",  price: 101.2 },
+  { date: "Apr 2",  price: 107.8 },
+  { date: "Apr 3",  price: 111.54 },
+  { date: "Apr 4",  price: 112.1 },
+  { date: "Apr 5",  price: 111.8 },
+  { date: "Apr 6",  price: 108.3 },
+  { date: "Apr 7",  price: 94.41 },
+  { date: "Apr 8",  price: 90.2 },
+  { date: "Apr 9",  price: 97.56 },
+  { date: "Apr 10", price: 96.4 },
+  { date: "Apr 11", price: 95.8 },
+  { date: "Apr 12", price: 95.2 },
+  { date: "Apr 13", price: 94.1 },
+  { date: "Apr 14", price: 91.8 },
+  { date: "Apr 15", price: 91.3 },
+  { date: "Apr 16", price: 94.62 },
+  { date: "Apr 17", price: 83.2 },
 ];
 
 const WTITooltip = ({ active, payload, label }) => {
@@ -49,6 +77,8 @@ const FUEL_DATA = [
   { date: "Mar 8",  petrol: 36, diesel: 34, jet: 32, note: "Bowen Parliament statement" },
   { date: "Mar 13", petrol: 37, diesel: 30, jet: 29, note: "Weekly press conference — 1.6B L petrol, reserves released" },
   { date: "Mar 20", petrol: 35, diesel: 28, jet: 27, note: "ACCC weekly update — stocks declining, IEA 400M bbl release underway" },
+  { date: "Mar 25", petrol: 27, diesel: 25, jet: 20, note: "Post-IEA coordinated release — 400M bbl global draw" },
+  { date: "Apr 15", petrol: 39, diesel: 30, jet: 29, note: "Incoming shipments secured — 57 tankers en route through May" },
 ];
 
 // Source: ACCC Weekly Fuel Price Monitoring Update (week to 18 Mar 2026) + 20 Mar estimates
@@ -57,24 +87,24 @@ const FUEL_DATA = [
 // RSS: https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update
 const PRICE_DATA = {
   petrol: [
-    { city: "Sydney",    price: 245.8, change: +57.8 },
-    { city: "Melbourne", price: 243.5, change: +55.5 },
-    { city: "Brisbane",  price: 242.1, change: +54.1 },
-    { city: "Adelaide",  price: 244.3, change: +56.3 },
-    { city: "Perth",     price: 248.5, change: +60.5 },
-    { city: "Canberra",  price: 238.0, change: +50.0 },
-    { city: "Hobart",    price: 241.2, change: +53.2 },
-    { city: "Darwin",    price: 256.7, change: +68.7 },
+    { city: "Sydney",    price: 218.3, change: +30.2 },
+    { city: "Melbourne", price: 213.0, change: +21.2 },
+    { city: "Brisbane",  price: 210.0, change: +17.4 },
+    { city: "Adelaide",  price: 205.0, change: +20.4 },
+    { city: "Perth",     price: 208.0, change: +26.5 },
+    { city: "Canberra",  price: 224.1, change: +37.7 },
+    { city: "Hobart",    price: 215.0, change: +21.6 },
+    { city: "Darwin",    price: 235.0, change: +33.9 },
   ],
   diesel: [
-    { city: "Sydney",    price: 280.3, change: +73.0 },
-    { city: "Melbourne", price: 283.6, change: +65.3 },
-    { city: "Brisbane",  price: 277.4, change: +62.1 },
-    { city: "Adelaide",  price: 279.5, change: +63.1 },
-    { city: "Perth",     price: 278.2, change: +55.9 },
-    { city: "Canberra",  price: 268.0, change: +62.2 },
-    { city: "Hobart",    price: 276.5, change: +59.7 },
-    { city: "Darwin",    price: 292.4, change: +74.2 },
+    { city: "Sydney",    price: 268.0, change: +105.3 },
+    { city: "Melbourne", price: 272.0, change: +104.9 },
+    { city: "Brisbane",  price: 271.0, change: +103.7 },
+    { city: "Adelaide",  price: 262.0, change: +96.6 },
+    { city: "Perth",     price: 265.0, change: +97.7 },
+    { city: "Canberra",  price: 278.0, change: +117.2 },
+    { city: "Hobart",    price: 274.0, change: +103.7 },
+    { city: "Darwin",    price: 282.0, change: +100.2 },
   ],
 };
 
@@ -208,8 +238,8 @@ export default function FuelTracker() {
           </div>
           <div style={{ background: "#0f1724", border: "1px solid #1e293b", borderRadius: 10, padding: "10px 16px", textAlign: "right" }}>
             <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 3 }}>LAST UPDATE</div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: "#94a3b8" }}>20 Mar 2026</div>
-            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>ACCC weekly + EIA spot data</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#94a3b8" }}>17 Apr 2026</div>
+            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>ACCC weekly · Hormuz open</div>
           </div>
         </div>
 
@@ -227,7 +257,7 @@ export default function FuelTracker() {
         }}>
           <span style={{ fontSize: 18 }}>⚠️</span>
           <span style={{ color: "#fca5a5" }}>
-            <strong>Middle East crisis:</strong> US–Iran conflict disrupting global supply chains. Regional shortages reported. Fuel standards relaxed for 60 days. IEA releasing 400M barrels globally.
+            <strong>Middle East crisis easing:</strong> US–Iran ceasefire (Apr 7) and Hormuz reopened (Apr 17) — WTI fell 12% on Apr 17. Excise halved to 26.3¢/L from Apr 1. 57 tankers securing supply through May.
           </span>
         </div>
       </div>
@@ -243,7 +273,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>WTI Crude — Global Spot Price</h2>
-              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Mar 20 · <a href="https://www.eia.gov/dnav/pet/hist/rwtcd.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA RSS</a></p>
+              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Apr 17 · <a href="https://www.eia.gov/dnav/pet/hist/rwtcd.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA</a> · West Texas Intermediate</p>
             </div>
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
               <div style={{ textAlign: "right" }}>
@@ -266,7 +296,7 @@ export default function FuelTracker() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} interval={3} />
-              <YAxis domain={[60, 110]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[60, 120]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip content={<WTITooltip />} />
               <ReferenceLine x="Feb 28" stroke="#ef444466" strokeDasharray="4 4" label={{ value: "Crisis", fill: "#ef4444", fontSize: 10 }} />
               <Area type="monotone" dataKey="price" stroke="#f97316" strokeWidth={2} fill="url(#wtiGrad)" dot={false} />
@@ -346,7 +376,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Capital City Retail Prices</h2>
-              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 20 March 2026 · Source: <a href="https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>ACCC weekly report</a></p>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 13 April 2026 · Source: <a href="https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>ACCC weekly report</a></p>
             </div>
             <div style={{ display: "flex", background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, overflow: "hidden" }}>
               {["petrol", "diesel"].map(t => (
@@ -373,12 +403,12 @@ export default function FuelTracker() {
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG PETROL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgPetrol}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+56.4¢ since Feb 20</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+26.1¢ since Feb 20 (incl. excise cut)</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG DIESEL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgDiesel}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+89.0¢ since Feb 20</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>Feb 20 baseline: ~167.8¢/L</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>ACCC MONITORING</div>
