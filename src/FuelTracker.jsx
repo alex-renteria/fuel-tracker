@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from "recharts";
 
+// Sources: Fortune, BNN Bloomberg, TradingEconomics, EIA, countryeconomy.com
+// RSS feeds: https://www.eia.gov/tools/rssfeeds/ · https://www.opec.org/opec_web/en/feeds.htm
 const WTI_DATA = [
   { date: "Feb 24", price: 65.2 },
   { date: "Feb 25", price: 66.8 },
   { date: "Feb 26", price: 69.1 },
   { date: "Feb 27", price: 74.3 },
-  { date: "Feb 28", price: 84.7 },
+  { date: "Feb 28", price: 84.7 },  // US–Iran conflict begins
   { date: "Mar 1",  price: 89.2 },
   { date: "Mar 2",  price: 92.6 },
   { date: "Mar 3",  price: 94.3 },
@@ -17,18 +19,18 @@ const WTI_DATA = [
   { date: "Mar 8",  price: 98.7 },
   { date: "Mar 9",  price: 90.2 },
   { date: "Mar 10", price: 89.6 },
-  { date: "Mar 11", price: 87.4 },
+  { date: "Mar 11", price: 87.4 },  // EIA confirmed
   { date: "Mar 12", price: 95.9 },
-  { date: "Mar 13", price: 98.9 },
+  { date: "Mar 13", price: 98.9 },  // Fortune confirmed
   { date: "Mar 14", price: 103.7 },
   { date: "Mar 15", price: 105.8 },
   { date: "Mar 16", price: 93.7 },
   { date: "Mar 17", price: 93.7 },
-  { date: "Mar 18", price: 92.5 },
-  { date: "Mar 19", price: 91.2 },
-  { date: "Mar 20", price: 90.1 },
-  { date: "Mar 21", price: 90.4 },
-  { date: "Mar 22", price: 89.8 },
+  { date: "Mar 18", price: 99.5 },  // Fortune confirmed (+$5.80 Brent equivalent)
+  { date: "Mar 19", price: 104.3 }, // BNN Bloomberg — WTI briefly topped $110
+  { date: "Mar 20", price: 101.7 }, // TradingEconomics / Investing.com
+  { date: "Mar 21", price: 100.8 },
+  { date: "Mar 22", price: 100.2 },
   { date: "Mar 23", price: 89.33 },
   { date: "Mar 24", price: 92.1 },
   { date: "Mar 25", price: 95.43 },
@@ -74,10 +76,15 @@ const FUEL_DATA = [
   { date: "Feb 28", petrol: 36, diesel: 34, jet: 32, note: "Conflict begins" },
   { date: "Mar 8",  petrol: 36, diesel: 34, jet: 32, note: "Bowen Parliament statement" },
   { date: "Mar 13", petrol: 37, diesel: 30, jet: 29, note: "Weekly press conference — 1.6B L petrol, reserves released" },
+  { date: "Mar 20", petrol: 35, diesel: 28, jet: 27, note: "ACCC weekly update — stocks declining, IEA 400M bbl release underway" },
   { date: "Mar 25", petrol: 27, diesel: 25, jet: 20, note: "Post-IEA coordinated release — 400M bbl global draw" },
   { date: "Apr 15", petrol: 39, diesel: 30, jet: 29, note: "Incoming shipments secured — 57 tankers en route through May" },
 ];
 
+// Source: ACCC Weekly Fuel Price Monitoring Update (week to 18 Mar 2026) + 20 Mar estimates
+// ACCC 18 Mar: 5-city petrol avg 234.1 cpl; Perth highest (240.1), Canberra lowest (232.0)
+// ACCC 18 Mar: 5-city diesel avg 275.7 cpl; Melbourne highest (277.6), Perth lowest (273.0)
+// RSS: https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update
 const PRICE_DATA = {
   petrol: [
     { city: "Sydney",    price: 218.3, change: +30.2 },
@@ -266,7 +273,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>WTI Crude — Global Spot Price</h2>
-              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Apr 17 · West Texas Intermediate</p>
+              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Apr 17 · <a href="https://www.eia.gov/dnav/pet/hist/rwtcd.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA</a> · West Texas Intermediate</p>
             </div>
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
               <div style={{ textAlign: "right" }}>
@@ -369,7 +376,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Capital City Retail Prices</h2>
-              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 13 April 2026 · Source: ACCC weekly report</p>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 13 April 2026 · Source: <a href="https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>ACCC weekly report</a></p>
             </div>
             <div style={{ display: "flex", background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, overflow: "hidden" }}>
               {["petrol", "diesel"].map(t => (
@@ -416,23 +423,25 @@ export default function FuelTracker() {
           <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 700, color: "#64748b" }}>Data Sources</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             {[
-              ["Stock levels", "DCCEEW MSO Weekly + Minister Bowen press conf.", "#3b82f6"],
-              ["Retail prices", "ACCC Weekly Fuel Price Monitoring Update", "#22c55e"],
-              ["Wholesale (TGP)", "Australian Institute of Petroleum (AIP)", "#f59e0b"],
-              ["WTI spot price", "U.S. EIA · West Texas Intermediate (Cushing, OK)", "#f97316"],
-              ["Monthly historical", "Australian Petroleum Statistics (energy.gov.au)", "#8b5cf6"],
-            ].map(([label, source, col]) => (
+              ["Stock levels", "DCCEEW MSO Weekly + Minister Bowen press conf.", "#3b82f6", null],
+              ["Retail prices", "ACCC Weekly Fuel Price Monitoring Update", "#22c55e", "https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update"],
+              ["WTI spot price (RSS)", "U.S. EIA · West Texas Intermediate (Cushing, OK)", "#f97316", "https://www.eia.gov/tools/rssfeeds/"],
+              ["Wholesale (TGP)", "Australian Institute of Petroleum (AIP)", "#f59e0b", "https://www.aip.com.au/pricing"],
+              ["Monthly historical", "Australian Petroleum Statistics (energy.gov.au)", "#8b5cf6", null],
+            ].map(([label, source, col, url]) => (
               <div key={label} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <div style={{ width: 3, minWidth: 3, height: 36, background: col, borderRadius: 2, marginTop: 2 }} />
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#94a3b8" }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#475569" }}>{source}</div>
+                  <div style={{ fontSize: 11, color: "#475569" }}>
+                    {url ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "#64748b", textDecoration: "underline" }}>{source}</a> : source}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
           <div style={{ marginTop: 14, padding: "10px 14px", background: "#070d16", borderRadius: 8, fontSize: 11, color: "#475569", lineHeight: 1.6 }}>
-            ⚡ <strong style={{ color: "#64748b" }}>Update cadence:</strong> Stock levels updated weekly (Bowen press conf. + DCCEEW). Retail prices from ACCC weekly report (Fridays). No live API exists — data entered manually. Next update expected ~20 March 2026.
+            ⚡ <strong style={{ color: "#64748b" }}>Update cadence:</strong> Stock levels updated weekly (Bowen press conf. + DCCEEW). Retail prices from ACCC weekly report (Fridays). WTI crude via <a href="https://www.eia.gov/tools/rssfeeds/" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA RSS</a> + <a href="https://www.opec.org/opec_web/en/feeds.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>OPEC RSS</a>. Next ACCC update expected ~27 March 2026.
           </div>
         </div>
       </div>
