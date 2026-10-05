@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from "recharts";
 
-// Sources: Fortune, BNN Bloomberg, TradingEconomics, EIA, countryeconomy.com
+// Sources: Fortune, BNN Bloomberg, TradingEconomics, EIA, countryeconomy.com, ConvexTrade
 // RSS feeds: https://www.eia.gov/tools/rssfeeds/ · https://www.opec.org/opec_web/en/feeds.htm
+// Key events: Hormuz crisis Feb 28; peak $112.95 May 19; US-Iran deal Jun 19 ($77 trough);
+//   deal collapse Jul; Bab-el-Mandeb closed Jul 22; Saudi Petroline drone strike Sep 11 ($107 spike)
 const WTI_DATA = [
   { date: "Feb 24", price: 65.2 },
   { date: "Feb 25", price: 66.8 },
@@ -27,7 +29,7 @@ const WTI_DATA = [
   { date: "Mar 16", price: 93.7 },
   { date: "Mar 17", price: 93.7 },
   { date: "Mar 18", price: 99.5 },  // Fortune confirmed (+$5.80 Brent equivalent)
-  { date: "Mar 19", price: 104.3 }, // BNN Bloomberg — WTI briefly topped $110
+  { date: "Mar 19", price: 104.3 }, // BNN Bloomberg
   { date: "Mar 20", price: 101.7 }, // TradingEconomics / Investing.com
   { date: "Mar 21", price: 100.8 },
   { date: "Mar 22", price: 100.2 },
@@ -56,7 +58,7 @@ const WTI_DATA = [
   { date: "Apr 14", price: 91.8 },
   { date: "Apr 15", price: 91.3 },
   { date: "Apr 16", price: 94.62 },
-  { date: "Apr 17", price: 83.2 },
+  { date: "Apr 17", price: 83.2 },  // Hormuz partial reopening — WTI dumps
   { date: "Apr 18", price: 83.5 },
   { date: "Apr 19", price: 84.2 },
   { date: "Apr 20", price: 91.06 },
@@ -68,6 +70,37 @@ const WTI_DATA = [
   { date: "Apr 26", price: 95.2 },
   { date: "Apr 27", price: 96.39 },
   { date: "Apr 28", price: 94.40 },
+  // May 2026 — Hormuz still unreliable; WTI climbs to 52-wk high
+  { date: "May 2",  price: 96.8 },
+  { date: "May 6",  price: 100.3 },
+  { date: "May 12", price: 105.7 },
+  { date: "May 19", price: 112.95 }, // 52-week high — IEA/EIA confirmed
+  { date: "May 26", price: 100.1 },
+  // June 2026 — US-Iran deal nears; WTI crashes on deal euphoria
+  { date: "Jun 2",  price: 91.5 },
+  { date: "Jun 9",  price: 86.2 },
+  { date: "Jun 16", price: 77.22 }, // Deal imminent — Aegis Hedging confirmed
+  { date: "Jun 19", price: 77.9 },  // Deal signed in Switzerland
+  { date: "Jun 26", price: 80.3 },
+  // July 2026 — Ceasefire collapses; Bab-el-Mandeb closed by Houthis
+  { date: "Jul 7",  price: 79.6 },
+  { date: "Jul 14", price: 79.56 },
+  { date: "Jul 22", price: 82.4 },  // Houthis shut Bab-el-Mandeb — Al Jazeera
+  { date: "Jul 27", price: 84.25 }, // Iran deal effectively failed
+  // August 2026 — Dual-strait disruption; rerouting premium builds
+  { date: "Aug 4",  price: 81.8 },
+  { date: "Aug 11", price: 84.3 },
+  { date: "Aug 18", price: 86.9 },
+  { date: "Aug 25", price: 89.2 },
+  // September 2026 — US-Iran strikes resume; Saudi Petroline drone attack
+  { date: "Sep 7",  price: 93.8 },  // US-Iran strikes near Hormuz — Al Jazeera
+  { date: "Sep 11", price: 107.0 }, // Saudi Petroline shut after drone strike — TurkiyeToday
+  { date: "Sep 15", price: 103.5 },
+  { date: "Sep 22", price: 96.4 },
+  { date: "Sep 29", price: 92.1 },
+  // October 2026 — Elevated with no clear resolution
+  { date: "Oct 4",  price: 91.11 }, // ConvexTrade
+  { date: "Oct 5",  price: 90.24 }, // Current
 ];
 
 const WTITooltip = ({ active, payload, label }) => {
@@ -90,33 +123,42 @@ const FUEL_DATA = [
   { date: "Mar 20", petrol: 35, diesel: 28, jet: 27, note: "ACCC weekly update — stocks declining, IEA 400M bbl release underway" },
   { date: "Mar 25", petrol: 27, diesel: 25, jet: 20, note: "Post-IEA coordinated release — 400M bbl global draw" },
   { date: "Apr 15", petrol: 39, diesel: 30, jet: 29, note: "Incoming shipments secured — 57 tankers en route through May" },
-  { date: "Apr 25", petrol: 42, diesel: 33, jet: 31, note: "4.6B L arriving — reserves rebuilding as Hormuz reopens" },
+  { date: "Apr 25", petrol: 42, diesel: 33, jet: 31, note: "4.6B L arriving — reserves rebuilding as Hormuz partially reopens" },
+  { date: "May 15", petrol: 46, diesel: 37, jet: 35, note: "Further tankers arrive; US-Iran deal optimism — stocks at 5-month high" },
+  { date: "Jun 20", petrol: 50, diesel: 41, jet: 39, note: "Deal signed Jun 19 — Hormuz reopening; largest stock level since Jan 2026" },
+  { date: "Jul 20", petrol: 44, diesel: 36, jet: 34, note: "Deal collapse Jul 14 + Bab-el-Mandeb closed Jul 22 — stocks declining" },
+  { date: "Aug 18", petrol: 38, diesel: 31, jet: 29, note: "Dual-strait disruption — tankers diverting via Cape of Good Hope (+3 wks)" },
+  { date: "Sep 15", petrol: 32, diesel: 26, jet: 24, note: "Saudi Petroline attack Sep 11 — critical supply shock; diesel near IEA warning" },
+  { date: "Oct 5",  petrol: 34, diesel: 26, jet: 22, note: "Diesel 26.1d — below 32d MSO min; 0.5d above emergency floor (Temp Reduction Instrument #3 2026)" },
 ];
 
-// Source: ACCC Weekly Fuel Price Monitoring Update (week to 18 Mar 2026) + 20 Mar estimates
-// ACCC 18 Mar: 5-city petrol avg 234.1 cpl; Perth highest (240.1), Canberra lowest (232.0)
-// ACCC 18 Mar: 5-city diesel avg 275.7 cpl; Melbourne highest (277.6), Perth lowest (273.0)
+// Source: ACCC Weekly Fuel Price Monitoring Update #30, week ending 2 Oct 2026
+// Excise cut (26.3¢/L) ended Jun 30 — full excise restored Jul 1
+// Dual-strait disruption (Hormuz + Bab-el-Mandeb) adding ~15–20¢ routing premium to diesel
+// Diesel flash-point standard 61.5°C reverted 1 Oct (was relaxed to 60.5°C since Apr) — tightens import pool
+// Feb 20 baselines — petrol: SYD 188.1, MEL 191.8, BNE 192.6, ADL 184.6, PER 181.5, CBR 186.4, HOB 193.4, DAR 201.1
+// Feb 20 baselines — diesel: SYD 162.7, MEL 167.1, BNE 167.3, ADL 165.4, PER 167.3, CBR 160.8, HOB 170.3, DAR 181.8
 // RSS: https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update
 const PRICE_DATA = {
   petrol: [
-    { city: "Sydney",    price: 215.0, change: +26.9 },
-    { city: "Melbourne", price: 209.0, change: +17.2 },
-    { city: "Brisbane",  price: 206.0, change: +13.4 },
-    { city: "Adelaide",  price: 201.0, change: +16.4 },
-    { city: "Perth",     price: 205.0, change: +23.5 },
-    { city: "Canberra",  price: 220.0, change: +33.6 },
-    { city: "Hobart",    price: 210.0, change: +16.6 },
-    { city: "Darwin",    price: 228.0, change: +26.9 },
+    { city: "Sydney",    price: 238.9, change: +50.8 },
+    { city: "Melbourne", price: 234.1, change: +42.3 },
+    { city: "Brisbane",  price: 238.3, change: +45.7 },
+    { city: "Adelaide",  price: 234.8, change: +50.2 },
+    { city: "Perth",     price: 239.5, change: +58.0 },
+    { city: "Canberra",  price: 246.5, change: +60.1 },
+    { city: "Hobart",    price: 245.4, change: +52.0 },
+    { city: "Darwin",    price: 244.6, change: +43.5 },
   ],
   diesel: [
-    { city: "Sydney",    price: 242.0, change: +79.3 },
-    { city: "Melbourne", price: 247.0, change: +79.9 },
-    { city: "Brisbane",  price: 246.0, change: +78.7 },
-    { city: "Adelaide",  price: 238.0, change: +72.6 },
-    { city: "Perth",     price: 240.0, change: +72.7 },
-    { city: "Canberra",  price: 252.0, change: +91.2 },
-    { city: "Hobart",    price: 248.0, change: +77.7 },
-    { city: "Darwin",    price: 258.0, change: +76.2 },
+    { city: "Sydney",    price: 285.2, change: +122.5 },
+    { city: "Melbourne", price: 286.6, change: +119.5 },
+    { city: "Brisbane",  price: 289.4, change: +122.1 },
+    { city: "Adelaide",  price: 290.0, change: +124.6 },
+    { city: "Perth",     price: 281.2, change: +113.9 },
+    { city: "Canberra",  price: 294.5, change: +133.7 },
+    { city: "Hobart",    price: 290.5, change: +120.2 },
+    { city: "Darwin",    price: 292.9, change: +111.1 },
   ],
 };
 
@@ -250,8 +292,8 @@ export default function FuelTracker() {
           </div>
           <div style={{ background: "#0f1724", border: "1px solid #1e293b", borderRadius: 10, padding: "10px 16px", textAlign: "right" }}>
             <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 3 }}>LAST UPDATE</div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: "#94a3b8" }}>28 Apr 2026</div>
-            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>ACCC weekly · reserves rebuilding</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#94a3b8" }}>5 Oct 2026</div>
+            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>ACCC weekly · dual-strait crisis</div>
           </div>
         </div>
 
@@ -269,7 +311,7 @@ export default function FuelTracker() {
         }}>
           <span style={{ fontSize: 18 }}>⚠️</span>
           <span style={{ color: "#fca5a5" }}>
-            <strong>Crisis easing:</strong> Hormuz reopened Apr 17 — WTI recovering to ~$94. Fuel excise halved (26.3¢/L, Apr 1–Jun 30). 4.6B L in transit; petrol reserves up to ~42 days and rising.
+            <strong>Double chokepoint crisis:</strong> Hormuz still contested; Bab-el-Mandeb closed by Houthis since Jul 22. Saudi Petroline knocked out by drone strike Sep 11 — WTI spiked to $107. Excise cut ended Jun 30. Diesel at <strong>26 days</strong> — below the 32-day MSO minimum; only ~0.5d above the emergency floor. Jet fuel also below minimum (22d vs 27d). Import restrictions tightened Oct 1 (flash-point standard reverted).
           </span>
         </div>
       </div>
@@ -285,7 +327,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>WTI Crude — Global Spot Price</h2>
-              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · daily · Feb 24 – Apr 28 · <a href="https://www.eia.gov/dnav/pet/hist/rwtcd.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA</a> · West Texas Intermediate</p>
+              <p style={{ margin: "3px 0 0", fontSize: 12, color: "#475569" }}>USD per barrel · weekly key events · Feb 24 – Oct 5 · <a href="https://www.eia.gov/dnav/pet/hist/rwtcd.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA</a> · West Texas Intermediate</p>
             </div>
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
               <div style={{ textAlign: "right" }}>
@@ -307,7 +349,7 @@ export default function FuelTracker() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} interval={7} />
+              <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} interval={12} />
               <YAxis domain={[60, 120]} tick={{ fill: "#475569", fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip content={<WTITooltip />} />
               <ReferenceLine x="Feb 28" stroke="#ef444466" strokeDasharray="4 4" label={{ value: "Crisis", fill: "#ef4444", fontSize: 10 }} />
@@ -388,7 +430,7 @@ export default function FuelTracker() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Capital City Retail Prices</h2>
-              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 24 April 2026 · Source: <a href="https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>ACCC weekly report</a></p>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#475569" }}>Cents per litre · as at 3 October 2026 · Source: <a href="https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>ACCC weekly report</a></p>
             </div>
             <div style={{ display: "flex", background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, overflow: "hidden" }}>
               {["petrol", "diesel"].map(t => (
@@ -415,12 +457,12 @@ export default function FuelTracker() {
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG PETROL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgPetrol}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+19.5¢ since Feb 20 (incl. excise cut)</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+50.3¢ avg since Feb 20 (excise restored Jul 1)</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG DIESEL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgDiesel}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>Feb 20 baseline: ~167.8¢/L</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+121.0¢ avg since Feb 20 · dual-strait routing premium</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>ACCC MONITORING</div>
@@ -453,7 +495,7 @@ export default function FuelTracker() {
             ))}
           </div>
           <div style={{ marginTop: 14, padding: "10px 14px", background: "#070d16", borderRadius: 8, fontSize: 11, color: "#475569", lineHeight: 1.6 }}>
-            ⚡ <strong style={{ color: "#64748b" }}>Update cadence:</strong> Stock levels updated weekly (Bowen press conf. + DCCEEW). Retail prices from ACCC weekly report (Fridays). WTI crude via <a href="https://www.eia.gov/tools/rssfeeds/" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA RSS</a> + <a href="https://www.opec.org/opec_web/en/feeds.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>OPEC RSS</a>. Next ACCC update expected ~27 March 2026.
+            ⚡ <strong style={{ color: "#64748b" }}>Update cadence:</strong> Stock levels updated weekly (Bowen press conf. + DCCEEW). Retail prices from ACCC weekly report (Fridays). WTI crude via <a href="https://www.eia.gov/tools/rssfeeds/" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>EIA RSS</a> + <a href="https://www.opec.org/opec_web/en/feeds.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>OPEC RSS</a>. Next ACCC update expected ~10 October 2026.
           </div>
         </div>
       </div>
