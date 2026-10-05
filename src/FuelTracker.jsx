@@ -129,35 +129,36 @@ const FUEL_DATA = [
   { date: "Jul 20", petrol: 44, diesel: 36, jet: 34, note: "Deal collapse Jul 14 + Bab-el-Mandeb closed Jul 22 — stocks declining" },
   { date: "Aug 18", petrol: 38, diesel: 31, jet: 29, note: "Dual-strait disruption — tankers diverting via Cape of Good Hope (+3 wks)" },
   { date: "Sep 15", petrol: 32, diesel: 26, jet: 24, note: "Saudi Petroline attack Sep 11 — critical supply shock; diesel near IEA warning" },
-  { date: "Oct 5",  petrol: 30, diesel: 23, jet: 21, note: "Danger territory — diesel below 27-day MSO minimum; emergency imports underway" },
+  { date: "Oct 5",  petrol: 34, diesel: 26, jet: 22, note: "Diesel 26.1d — below 32d MSO min; 0.5d above emergency floor (Temp Reduction Instrument #3 2026)" },
 ];
 
-// Source: ACCC Weekly Fuel Price Monitoring, week to 3 Oct 2026 (est.)
+// Source: ACCC Weekly Fuel Price Monitoring Update #30, week ending 2 Oct 2026
 // Excise cut (26.3¢/L) ended Jun 30 — full excise restored Jul 1
 // Dual-strait disruption (Hormuz + Bab-el-Mandeb) adding ~15–20¢ routing premium to diesel
+// Diesel flash-point standard 61.5°C reverted 1 Oct (was relaxed to 60.5°C since Apr) — tightens import pool
 // Feb 20 baselines — petrol: SYD 188.1, MEL 191.8, BNE 192.6, ADL 184.6, PER 181.5, CBR 186.4, HOB 193.4, DAR 201.1
 // Feb 20 baselines — diesel: SYD 162.7, MEL 167.1, BNE 167.3, ADL 165.4, PER 167.3, CBR 160.8, HOB 170.3, DAR 181.8
 // RSS: https://www.accc.gov.au/about-us/publications/weekly-fuel-price-monitoring-update
 const PRICE_DATA = {
   petrol: [
-    { city: "Sydney",    price: 241.0, change: +52.9 },
-    { city: "Melbourne", price: 235.0, change: +43.2 },
-    { city: "Brisbane",  price: 232.0, change: +39.4 },
-    { city: "Adelaide",  price: 228.0, change: +43.4 },
-    { city: "Perth",     price: 234.0, change: +52.5 },
-    { city: "Canberra",  price: 248.0, change: +61.6 },
-    { city: "Hobart",    price: 237.0, change: +43.6 },
-    { city: "Darwin",    price: 258.0, change: +56.9 },
+    { city: "Sydney",    price: 238.9, change: +50.8 },
+    { city: "Melbourne", price: 234.1, change: +42.3 },
+    { city: "Brisbane",  price: 238.3, change: +45.7 },
+    { city: "Adelaide",  price: 234.8, change: +50.2 },
+    { city: "Perth",     price: 239.5, change: +58.0 },
+    { city: "Canberra",  price: 246.5, change: +60.1 },
+    { city: "Hobart",    price: 245.4, change: +52.0 },
+    { city: "Darwin",    price: 244.6, change: +43.5 },
   ],
   diesel: [
-    { city: "Sydney",    price: 285.0, change: +122.3 },
-    { city: "Melbourne", price: 290.0, change: +122.9 },
-    { city: "Brisbane",  price: 288.0, change: +120.7 },
-    { city: "Adelaide",  price: 280.0, change: +114.6 },
-    { city: "Perth",     price: 282.0, change: +114.7 },
-    { city: "Canberra",  price: 298.0, change: +137.2 },
-    { city: "Hobart",    price: 292.0, change: +121.7 },
-    { city: "Darwin",    price: 308.0, change: +126.2 },
+    { city: "Sydney",    price: 285.2, change: +122.5 },
+    { city: "Melbourne", price: 286.6, change: +119.5 },
+    { city: "Brisbane",  price: 289.4, change: +122.1 },
+    { city: "Adelaide",  price: 290.0, change: +124.6 },
+    { city: "Perth",     price: 281.2, change: +113.9 },
+    { city: "Canberra",  price: 294.5, change: +133.7 },
+    { city: "Hobart",    price: 290.5, change: +120.2 },
+    { city: "Darwin",    price: 292.9, change: +111.1 },
   ],
 };
 
@@ -310,7 +311,7 @@ export default function FuelTracker() {
         }}>
           <span style={{ fontSize: 18 }}>⚠️</span>
           <span style={{ color: "#fca5a5" }}>
-            <strong>Double chokepoint crisis:</strong> Hormuz still contested; Bab-el-Mandeb closed by Houthis since Jul 22. Saudi Petroline knocked out by drone strike Sep 11 — WTI spiked to $107. Fuel excise cut ended Jun 30 (full excise restored). Diesel at <strong>23 days</strong> — below the 27-day MSO minimum. Emergency imports underway.
+            <strong>Double chokepoint crisis:</strong> Hormuz still contested; Bab-el-Mandeb closed by Houthis since Jul 22. Saudi Petroline knocked out by drone strike Sep 11 — WTI spiked to $107. Excise cut ended Jun 30. Diesel at <strong>26 days</strong> — below the 32-day MSO minimum; only ~0.5d above the emergency floor. Jet fuel also below minimum (22d vs 27d). Import restrictions tightened Oct 1 (flash-point standard reverted).
           </span>
         </div>
       </div>
@@ -456,12 +457,12 @@ export default function FuelTracker() {
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG PETROL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgPetrol}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+49.1¢ avg since Feb 20 (excise restored Jul 1)</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+50.3¢ avg since Feb 20 (excise restored Jul 1)</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>5-CITY AVG DIESEL</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f59e0b", fontFamily: "'DM Mono', monospace" }}>{avgDiesel}¢/L</div>
-              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+122.8¢ avg since Feb 20 · dual-strait routing premium</div>
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 2 }}>+121.0¢ avg since Feb 20 · dual-strait routing premium</div>
             </div>
             <div style={{ flex: 1, background: "#070d16", border: "1px solid #1e293b", borderRadius: 8, padding: "12px 14px" }}>
               <div style={{ fontSize: 11, color: "#475569", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>ACCC MONITORING</div>
